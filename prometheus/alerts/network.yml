@@ -1,0 +1,60 @@
+groups:
+  - name: network_alerts
+    interval: 30s
+    rules:
+      - alert: HighNetworkInbound
+        expr: rate(node_network_receive_bytes_total{device!~"lo|veth.*|docker.*|br-.*"}[5m]) > 100000000
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High inbound traffic on {{ $labels.instance }} ({{ $labels.device }})"
+          description: "Inbound traffic on {{ $labels.device }} exceeds 100 Mbps. Current: {{ $value | humanize }}B/s"
+
+      - alert: HighNetworkOutbound
+        expr: rate(node_network_transmit_bytes_total{device!~"lo|veth.*|docker.*|br-.*"}[5m]) > 100000000
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High outbound traffic on {{ $labels.instance }} ({{ $labels.device }})"
+          description: "Outbound traffic on {{ $labels.device }} exceeds 100 Mbps. Current: {{ $value | humanize }}B/s"
+
+      - alert: TrafficSpike
+        expr: rate(node_network_receive_bytes_total{device!~"lo|veth.*|docker.*|br-.*"}[5m]) > 5 * avg_over_time(rate(node_network_receive_bytes_total{device!~"lo|veth.*|docker.*|br-.*"}[5m])[1h:5m])
+        for: 3m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Traffic spike detected on {{ $labels.instance }}:{{ $labels.device }}"
+          description: "Inbound traffic is 5x higher than 1-hour average on {{ $labels.device }}."
+
+      - alert: HighPacketDropRate
+        expr: rate(node_network_receive_drop_total{device!~"lo|veth.*|docker.*|br-.*"}[5m]) > 100
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High packet drop rate on {{ $labels.instance }}:{{ $labels.device }}"
+          description: "Packet drop rate: {{ $value | printf \"%.0f\" }}/s on {{ $labels.device }}"
+
+      - alert: HighNetworkErrors
+        expr: rate(node_network_receive_errs_total{device!~"lo|veth.*|docker.*|br-.*"}[5m]) + rate(node_network_transmit_errs_total{device!~"lo|veth.*|docker.*|br-.*"}[5m]) > 10
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High network error rate on {{ $labels.instance }}:{{ $labels.device }}"
+          description: "Network errors on {{ $labels.device }}: {{ $value | printf \"%.1f\" }}/s"
+
+  - name: container_alerts
+    interval: 30s
+    rules:
+      - alert: PrometheusTargetMissing
+        expr: up == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Prometheus target missing: {{ $labels.job }}"
+          description: "Target {{ $labels.instance }} of job {{ $labels.job }} is not reachable."

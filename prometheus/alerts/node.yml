@@ -1,0 +1,84 @@
+groups:
+  - name: node_alerts
+    interval: 30s
+    rules:
+      - alert: HostDown
+        expr: up == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Host {{ $labels.instance }} is down"
+          description: "Prometheus target {{ $labels.instance }} (job={{ $labels.job }}) has been down for more than 1 minute."
+
+      - alert: HighCPUUsage
+        expr: 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 85
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High CPU usage on {{ $labels.instance }}"
+          description: "CPU usage is above 85% on {{ $labels.instance }} for more than 5 minutes. Current value: {{ $value | printf \"%.1f\" }}%"
+
+      - alert: CriticalCPUUsage
+        expr: 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 95
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Critical CPU usage on {{ $labels.instance }}"
+          description: "CPU usage is above 95% on {{ $labels.instance }}. Current value: {{ $value | printf \"%.1f\" }}%"
+
+      - alert: HighMemoryUsage
+        expr: (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100 > 85
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High memory usage on {{ $labels.instance }}"
+          description: "Memory usage is above 85% on {{ $labels.instance }}. Current value: {{ $value | printf \"%.1f\" }}%"
+
+      - alert: CriticalMemoryUsage
+        expr: (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100 > 95
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Critical memory usage on {{ $labels.instance }}"
+          description: "Memory usage is above 95% on {{ $labels.instance }}. Current value: {{ $value | printf \"%.1f\" }}%"
+
+      - alert: DiskSpaceLow
+        expr: (1 - (node_filesystem_avail_bytes{fstype!~"tmpfs|fuse.lxcfs|squashfs"} / node_filesystem_size_bytes{fstype!~"tmpfs|fuse.lxcfs|squashfs"})) * 100 > 80
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Low disk space on {{ $labels.instance }}:{{ $labels.mountpoint }}"
+          description: "Disk usage above 80% on {{ $labels.instance }} at {{ $labels.mountpoint }}. Used: {{ $value | printf \"%.1f\" }}%"
+
+      - alert: DiskSpaceCritical
+        expr: (1 - (node_filesystem_avail_bytes{fstype!~"tmpfs|fuse.lxcfs|squashfs"} / node_filesystem_size_bytes{fstype!~"tmpfs|fuse.lxcfs|squashfs"})) * 100 > 90
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Critical disk space on {{ $labels.instance }}:{{ $labels.mountpoint }}"
+          description: "Disk usage above 90% on {{ $labels.instance }} at {{ $labels.mountpoint }}. Used: {{ $value | printf \"%.1f\" }}%"
+
+      - alert: SystemLoadHigh
+        expr: node_load15 / on(instance) count by(instance) (node_cpu_seconds_total{mode="idle"}) > 1.5
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High system load on {{ $labels.instance }}"
+          description: "15-minute load average is {{ $value | printf \"%.2f\" }}x CPU count on {{ $labels.instance }}"
+
+      - alert: NetworkInterfaceDown
+        expr: node_network_up{device!~"lo|veth.*|docker.*|br-.*"} == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Network interface {{ $labels.device }} down on {{ $labels.instance }}"
+          description: "Network interface {{ $labels.device }} on {{ $labels.instance }} has been down for 2 minutes."

@@ -1,0 +1,80 @@
+filebeat.inputs:
+  # Suricata EVE JSON - primary IDS log source
+  - type: filestream
+    id: suricata-eve
+    enabled: true
+    paths:
+      - /var/log/suricata/eve.json
+    parsers:
+      - ndjson:
+          target: ""
+          overwrite_keys: true
+          add_error_key: true
+    fields:
+      type: suricata
+    fields_under_root: true
+    tags: ["suricata", "ids"]
+
+  # Suricata alert fast log
+  - type: filestream
+    id: suricata-fast
+    enabled: true
+    paths:
+      - /var/log/suricata/fast.log
+    fields:
+      type: suricata-fast
+    tags: ["suricata", "ids"]
+
+  # System auth log
+  - type: filestream
+    id: system-auth
+    enabled: true
+    paths:
+      - /var/log/host/auth.log
+      - /var/log/host/secure
+    fields:
+      type: syslog
+      dataset: system.auth
+    tags: ["system", "auth"]
+
+  # System syslog
+  - type: filestream
+    id: system-syslog
+    enabled: true
+    paths:
+      - /var/log/host/syslog
+      - /var/log/host/messages
+    fields:
+      type: syslog
+      dataset: system.syslog
+    tags: ["system", "syslog"]
+
+filebeat.config.modules:
+  path: ${path.config}/modules.d/*.yml
+  reload.enabled: false
+
+setup.template.settings:
+  index.number_of_shards: 1
+  index.codec: best_compression
+
+setup.kibana:
+  host: "kibana:5601"
+  username: "elastic"
+  password: "${ELASTIC_PASSWORD}"
+
+output.logstash:
+  hosts: ["logstash:5044"]
+  # Bulk queue
+  bulk_max_size: 2048
+
+# Monitoring
+monitoring.enabled: false
+
+# Logging
+logging.level: warning
+logging.to_files: true
+logging.files:
+  path: /var/log/filebeat
+  name: filebeat
+  keepfiles: 7
+  permissions: 0640

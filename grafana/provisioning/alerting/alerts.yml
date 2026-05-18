@@ -1,0 +1,51 @@
+apiVersion: 1
+
+contactPoints:
+  - orgId: 1
+    name: telegram-noc
+    receivers:
+      - uid: telegram-receiver
+        type: telegram
+        settings:
+          bottoken: "${ALERT_TELEGRAM_BOT_TOKEN}"
+          chatid: "${ALERT_TELEGRAM_CHAT_ID}"
+          message: |
+            {{ if eq .Status "firing" }}🚨{{ else }}✅{{ end }} *{{ .CommonLabels.alertname }}*
+            Severity: {{ .CommonLabels.severity }}
+            {{ range .Alerts }}
+            Summary: {{ .Annotations.summary }}
+            {{ end }}
+          parseMode: Markdown
+          disableNotification: false
+
+  - orgId: 1
+    name: email-noc
+    receivers:
+      - uid: email-receiver
+        type: email
+        settings:
+          addresses: "${ALERT_EMAIL_TO}"
+          subject: "[NOC] {{ .CommonLabels.alertname }} - {{ .Status | title }}"
+          body: |
+            <h2>NOC Alert: {{ .CommonLabels.alertname }}</h2>
+            <p><b>Status:</b> {{ .Status }}</p>
+            <p><b>Severity:</b> {{ .CommonLabels.severity }}</p>
+            {{ range .Alerts }}
+            <hr>
+            <p><b>Summary:</b> {{ .Annotations.summary }}</p>
+            <p><b>Description:</b> {{ .Annotations.description }}</p>
+            <p><b>Instance:</b> {{ .Labels.instance }}</p>
+            {{ end }}
+
+policies:
+  - orgId: 1
+    receiver: telegram-noc
+    group_by: ['grafana_folder', 'alertname']
+    routes:
+      - receiver: email-noc
+        matchers:
+          - "severity = critical"
+        continue: true
+      - receiver: telegram-noc
+        matchers:
+          - "severity =~ warning|critical"

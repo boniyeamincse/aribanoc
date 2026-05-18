@@ -1,0 +1,41 @@
+apiVersion: 1
+datasources:
+  - name: Prometheus
+    type: prometheus
+    uid: prometheus-uid
+    access: proxy
+    url: http://prometheus:9090
+    isDefault: true
+    editable: true
+    jsonData:
+      timeInterval: "15s"
+      queryTimeout: "60s"
+
+  - name: Elasticsearch
+    type: elasticsearch
+    uid: elasticsearch-uid
+    access: proxy
+    url: http://elasticsearch:9200
+    editable: true
+    database: "noc-*"
+    jsonData:
+      index: "noc-*"
+      timeField: "@timestamp"
+      esVersion: "8.0.0"
+      logMessageField: "message"
+      logLevelField: "log.level"
+      maxConcurrentShardRequests: 5
+    secureJsonData:
+      basicAuthPassword: "${ELASTIC_PASSWORD}"
+    basicAuth: true
+    basicAuthUser: "elastic"
+
+  - name: Alertmanager
+    type: alertmanager
+    uid: alertmanager-uid
+    access: proxy
+    url: http://alertmanager:9093
+    editable: true
+    jsonData:
+      implementation: prometheus
+

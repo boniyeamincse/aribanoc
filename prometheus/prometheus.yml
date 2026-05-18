@@ -1,0 +1,53 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    monitor: 'ariba-noc-center'
+    environment: 'production'
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: ['alertmanager:9093']
+
+rule_files:
+  - '/etc/prometheus/alerts/*.yml'
+
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  - job_name: 'node'
+    static_configs:
+      - targets: ['node_exporter:9100']
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+        replacement: 'noc-host'
+
+  - job_name: 'alertmanager'
+    static_configs:
+      - targets: ['alertmanager:9093']
+
+  # Add additional node exporters for monitored hosts:
+  # - job_name: 'network-devices'
+  #   static_configs:
+  #     - targets: ['192.168.1.1:9100', '192.168.1.2:9100']
+
+  # SNMP exporter for network devices (routers/switches)
+  # - job_name: 'snmp'
+  #   static_configs:
+  #     - targets: ['192.168.1.1']
+  #   metrics_path: /snmp
+  #   params:
+  #     module: [if_mib]
+  #   relabel_configs:
+  #     - source_labels: [__address__]
+  #       target_label: __param_target
+  #     - source_labels: [__param_target]
+  #       target_label: instance
+  #     - target_label: __address__
+  #       replacement: snmp-exporter:9116
+
+

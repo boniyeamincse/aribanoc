@@ -1,0 +1,206 @@
+{
+  "id": null,
+  "uid": "suricata-ids",
+  "title": "Suricata IDS / Security Events",
+  "tags": ["noc", "security", "ids", "suricata"],
+  "timezone": "browser",
+  "schemaVersion": 38,
+  "version": 1,
+  "refresh": "30s",
+  "time": { "from": "now-6h", "to": "now" },
+  "templating": {
+    "list": [
+      {
+        "name": "DS_ELASTICSEARCH",
+        "type": "datasource",
+        "pluginId": "elasticsearch",
+        "current": { "text": "Elasticsearch", "value": "elasticsearch-uid" }
+      }
+    ]
+  },
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Total Alerts (last 6h)",
+      "id": 1,
+      "datasource": { "type": "elasticsearch", "uid": "${DS_ELASTICSEARCH}" },
+      "gridPos": { "x": 0, "y": 0, "w": 6, "h": 4 },
+      "targets": [
+        {
+          "query": "suricata.event_type:alert",
+          "metrics": [{ "id": "1", "type": "count" }],
+          "timeField": "@timestamp",
+          "refId": "A"
+        }
+      ],
+      "options": { "colorMode": "background", "graphMode": "none" },
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 10 },
+              { "color": "red", "value": 100 }
+            ]
+          },
+          "color": { "mode": "thresholds" }
+        }
+      }
+    },
+    {
+      "type": "stat",
+      "title": "Unique Source IPs",
+      "id": 2,
+      "datasource": { "type": "elasticsearch", "uid": "${DS_ELASTICSEARCH}" },
+      "gridPos": { "x": 6, "y": 0, "w": 6, "h": 4 },
+      "targets": [
+        {
+          "query": "suricata.event_type:alert",
+          "metrics": [{ "id": "1", "type": "cardinality", "field": "src_ip" }],
+          "timeField": "@timestamp",
+          "refId": "A"
+        }
+      ],
+      "options": { "colorMode": "value", "graphMode": "none" },
+      "fieldConfig": { "defaults": { "color": { "mode": "fixed", "fixedColor": "blue" } } }
+    },
+    {
+      "type": "stat",
+      "title": "Critical Severity",
+      "id": 3,
+      "datasource": { "type": "elasticsearch", "uid": "${DS_ELASTICSEARCH}" },
+      "gridPos": { "x": 12, "y": 0, "w": 6, "h": 4 },
+      "targets": [
+        {
+          "query": "suricata.event_type:alert AND suricata.alert.severity:1",
+          "metrics": [{ "id": "1", "type": "count" }],
+          "timeField": "@timestamp",
+          "refId": "A"
+        }
+      ],
+      "options": { "colorMode": "background", "graphMode": "none" },
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "red", "value": 1 }
+            ]
+          },
+          "color": { "mode": "thresholds" }
+        }
+      }
+    },
+    {
+      "type": "stat",
+      "title": "DNS Queries",
+      "id": 4,
+      "datasource": { "type": "elasticsearch", "uid": "${DS_ELASTICSEARCH}" },
+      "gridPos": { "x": 18, "y": 0, "w": 6, "h": 4 },
+      "targets": [
+        {
+          "query": "suricata.event_type:dns",
+          "metrics": [{ "id": "1", "type": "count" }],
+          "timeField": "@timestamp",
+          "refId": "A"
+        }
+      ],
+      "options": { "colorMode": "value", "graphMode": "area" },
+      "fieldConfig": { "defaults": { "unit": "short" } }
+    },
+    {
+      "type": "timeseries",
+      "title": "Alert Rate Over Time",
+      "id": 10,
+      "datasource": { "type": "elasticsearch", "uid": "${DS_ELASTICSEARCH}" },
+      "gridPos": { "x": 0, "y": 4, "w": 24, "h": 8 },
+      "targets": [
+        {
+          "query": "suricata.event_type:alert",
+          "metrics": [{ "id": "1", "type": "count" }],
+          "bucketAggs": [
+            { "type": "date_histogram", "id": "2", "field": "@timestamp", "settings": { "interval": "auto" } }
+          ],
+          "timeField": "@timestamp",
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": { "defaults": { "unit": "short", "color": { "mode": "fixed", "fixedColor": "red" } } }
+    },
+    {
+      "type": "table",
+      "title": "Top Alert Signatures",
+      "id": 20,
+      "datasource": { "type": "elasticsearch", "uid": "${DS_ELASTICSEARCH}" },
+      "gridPos": { "x": 0, "y": 12, "w": 12, "h": 10 },
+      "targets": [
+        {
+          "query": "suricata.event_type:alert",
+          "metrics": [{ "id": "1", "type": "count" }],
+          "bucketAggs": [
+            {
+              "type": "terms",
+              "id": "2",
+              "field": "suricata.alert.signature.keyword",
+              "settings": { "size": "15", "order": "desc", "orderBy": "1" }
+            }
+          ],
+          "timeField": "@timestamp",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "title": "Top Source IPs",
+      "id": 21,
+      "datasource": { "type": "elasticsearch", "uid": "${DS_ELASTICSEARCH}" },
+      "gridPos": { "x": 12, "y": 12, "w": 12, "h": 10 },
+      "targets": [
+        {
+          "query": "suricata.event_type:alert",
+          "metrics": [{ "id": "1", "type": "count" }],
+          "bucketAggs": [
+            {
+              "type": "terms",
+              "id": "2",
+              "field": "src_ip.keyword",
+              "settings": { "size": "15", "order": "desc", "orderBy": "1" }
+            }
+          ],
+          "timeField": "@timestamp",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "type": "geomap",
+      "title": "Alert Source Geo Distribution",
+      "id": 30,
+      "datasource": { "type": "elasticsearch", "uid": "${DS_ELASTICSEARCH}" },
+      "gridPos": { "x": 0, "y": 22, "w": 24, "h": 10 },
+      "targets": [
+        {
+          "query": "suricata.event_type:alert AND geoip.location:*",
+          "metrics": [{ "id": "1", "type": "count" }],
+          "bucketAggs": [
+            {
+              "type": "geo_hash_grid",
+              "id": "2",
+              "field": "geoip.location",
+              "settings": { "precision": "3" }
+            }
+          ],
+          "timeField": "@timestamp",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "view": { "id": "zero", "zoom": 2 },
+        "layers": [
+          { "type": "heatmap", "config": { "weight": { "mode": "fixed", "fixed": 1 } } }
+        ]
+      }
+    }
+  ]
+}
