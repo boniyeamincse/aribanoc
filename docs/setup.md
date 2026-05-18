@@ -17,10 +17,13 @@
 # 1. Clone / enter the project directory
 cd /home/boni/Desktop/SOC_Akij/noc
 
-# 2. Run the setup script (first time only)
+# 2. Preferred: auto-installer (installs Docker/Compose and required tools)
+bash install.sh
+
+# 3. OR run setup directly if dependencies already exist
 bash scripts/setup.sh
 
-# 3. OR manual startup:
+# 4. OR fully manual startup:
 cp .env.example .env
 # Edit .env — fill in passwords and alert credentials
 nano .env
@@ -36,9 +39,38 @@ chmod +x zabbix/alertscripts/*.sh scripts/watchdog.sh
 
 # Start all services
 docker compose up -d
+
+# Optional: start watchdog (disabled by default for security)
+docker compose --profile ops up -d watchdog
 ```
 
+Security defaults in this stack:
+
+- `BIND_ADDRESS=127.0.0.1` binds web ports to localhost by default.
+- Watchdog is placed behind the `ops` profile because it mounts the Docker socket.
+- Critical secrets are required from `.env` (no insecure runtime fallback values).
+
 ## Service-by-Service Configuration
+
+## Container Management and Troubleshooting CLI
+
+Ariba NOC Center includes a built-in operations CLI:
+
+```bash
+./scripts/nocctl.sh help
+./scripts/nocctl.sh status
+./scripts/nocctl.sh health
+./scripts/nocctl.sh doctor
+./scripts/nocctl.sh logs elasticsearch 200
+./scripts/nocctl.sh restart all
+```
+
+Common workflow:
+
+1. Run `./scripts/nocctl.sh doctor` for quick diagnostics.
+2. Check failing service logs with `./scripts/nocctl.sh logs <service> 300`.
+3. Restart only affected service with `./scripts/nocctl.sh restart <service>`.
+4. Re-check health with `./scripts/nocctl.sh health`.
 
 ### Grafana (Port 3000)
 

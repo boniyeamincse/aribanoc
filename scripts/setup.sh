@@ -40,6 +40,7 @@ info "Setting permissions on alertscripts..."
 chmod +x zabbix/alertscripts/telegram.sh
 chmod +x zabbix/alertscripts/email.sh
 chmod +x scripts/watchdog.sh
+chmod +x scripts/nocctl.sh
 
 # ── 5. Tune kernel parameters for Elasticsearch ───────────────────────────────
 info "Tuning kernel parameters for Elasticsearch (vm.max_map_count)..."
@@ -84,3 +85,4 @@ warn "  1. Log into Zabbix and configure Telegram/email media type using scripts
 warn "  2. In LibreNMS, go to Devices → Add Device to start SNMP discovery"
 warn "  3. In NetBox, create your network topology under Infrastructure"
 warn "  4. Review Grafana dashboards at http://localhost:3000"
+warn "  5. Use scripts/nocctl.sh for troubleshooting and container management"

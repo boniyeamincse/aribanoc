@@ -1,0 +1,1307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ariba NOC Center - Technical Documentation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #090e12;
+      --panel: rgba(18, 25, 33, 0.7);
+      --panel-strong: #161f28;
+      --ink: #e2e8f0;
+      --muted: #8b9eb0;
+      --line: #22303e;
+      --accent: #00e5ff;
+      --accent-soft: rgba(0, 229, 255, 0.1);
+      --accent-deep: #008899;
+      --warn: #ff4757;
+      --ok: #00ff88;
+      --code-bg: #0d1318;
+      --code-ink: #b3c5d6;
+      --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      --glow: 0 0 20px rgba(0, 229, 255, 0.3);
+      --radius: 16px;
+      --font-main: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background-color: var(--bg);
+      background-image: 
+        radial-gradient(circle at 15% 50%, rgba(0, 229, 255, 0.05), transparent 25%),
+        radial-gradient(circle at 85% 30%, rgba(0, 229, 255, 0.04), transparent 25%);
+      font-family: var(--font-main);
+      line-height: 1.7;
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+    
+    a:hover {
+      text-shadow: var(--glow);
+    }
+
+    .page {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 32px 20px 80px;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      border-radius: 24px;
+      padding: 60px 48px;
+      color: #ffffff;
+      background: linear-gradient(135deg, rgba(8, 14, 20, 0.9) 0%, rgba(4, 30, 42, 0.9) 100%), url('assets/noc_hero_banner.png') center/cover no-repeat;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(0, 229, 255, 0.2);
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: linear-gradient(90deg, #090e12 15%, transparent 60%);
+      z-index: 0;
+    }
+
+    .hero > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero h1 {
+      margin: 0 0 16px;
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      line-height: 1.1;
+      letter-spacing: -0.04em;
+      font-weight: 800;
+      text-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    }
+
+    .hero p {
+      max-width: 700px;
+      margin: 0;
+      color: #b3c5d6;
+      font-size: 1.15rem;
+    }
+
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 32px;
+    }
+
+    .tag {
+      padding: 8px 16px;
+      border-radius: 999px;
+      border: 1px solid rgba(0, 229, 255, 0.3);
+      background: rgba(0, 229, 255, 0.05);
+      color: var(--accent);
+      font-size: 0.9rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      backdrop-filter: blur(4px);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 280px minmax(0, 1fr);
+      gap: 32px;
+      margin-top: 40px;
+      align-items: start;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 24px;
+      padding: 24px;
+      border-radius: var(--radius);
+      background: var(--panel);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+    }
+
+    .sidebar h2 {
+      margin: 0 0 16px;
+      font-size: 1.1rem;
+      color: #fff;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .sidebar ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .sidebar li + li {
+      margin-top: 10px;
+    }
+
+    .sidebar a {
+      color: var(--muted);
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      transition: color 0.2s, padding-left 0.2s;
+    }
+
+    .sidebar a:hover {
+      color: var(--accent);
+      padding-left: 6px;
+      text-shadow: none;
+    }
+
+    .sidebar .small {
+      margin-top: 24px;
+      color: var(--muted);
+      font-size: 0.85rem;
+      border-top: 1px solid var(--line);
+      padding-top: 16px;
+    }
+
+    main {
+      display: grid;
+      gap: 32px;
+    }
+
+    section {
+      padding: 40px;
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+      transition: transform 0.3s ease, border-color 0.3s ease;
+    }
+
+    section:hover {
+      border-color: rgba(0, 229, 255, 0.2);
+    }
+
+    h2 {
+      margin: 0 0 20px;
+      font-size: 1.8rem;
+      letter-spacing: -0.02em;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    h2::before {
+      content: "";
+      display: block;
+      width: 12px;
+      height: 12px;
+      background: var(--accent);
+      border-radius: 50%;
+      box-shadow: var(--glow);
+    }
+
+    h3 {
+      margin: 32px 0 16px;
+      font-size: 1.2rem;
+      color: #fff;
+      letter-spacing: -0.01em;
+    }
+
+    p, li {
+      color: var(--ink);
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      padding: 24px;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      background: var(--panel-strong);
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+    
+    .card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(0, 229, 255, 0.3);
+      box-shadow: 0 10px 24px rgba(0,0,0,0.5), inset 0 0 20px rgba(0, 229, 255, 0.05);
+    }
+
+    .card strong {
+      display: block;
+      margin-bottom: 8px;
+      color: #fff;
+      font-size: 1.1rem;
+    }
+
+    .callout {
+      padding: 16px 20px;
+      border-radius: 12px;
+      background: rgba(255, 71, 87, 0.1);
+      border-left: 4px solid var(--warn);
+      color: #fff;
+    }
+
+    .success {
+      background: rgba(0, 255, 136, 0.1);
+      border-left-color: var(--ok);
+    }
+
+    .kpi {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin-top: 40px;
+    }
+
+    .kpi .card {
+      text-align: center;
+      padding: 24px 16px;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(8px);
+    }
+
+    .kpi .num {
+      display: block;
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: var(--accent);
+      text-shadow: var(--glow);
+      margin-bottom: 4px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      overflow: hidden;
+      background: var(--panel-strong);
+      font-size: 0.95rem;
+      margin-top: 16px;
+    }
+
+    th, td {
+      padding: 16px;
+      text-align: left;
+      vertical-align: top;
+      border-bottom: 1px solid var(--line);
+    }
+
+    th {
+      background: rgba(0, 229, 255, 0.05);
+      color: var(--accent);
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      font-size: 0.85rem;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    code, pre {
+      font-family: 'JetBrains Mono', 'Fira Code', 'IBM Plex Mono', monospace;
+    }
+
+    code {
+      background: rgba(255, 255, 255, 0.08);
+      padding: 0.2rem 0.4rem;
+      border-radius: 6px;
+      color: #fff;
+      font-size: 0.9em;
+    }
+
+    pre {
+      margin: 16px 0;
+      padding: 20px;
+      border-radius: 12px;
+      background: var(--code-bg);
+      color: var(--code-ink);
+      overflow-x: auto;
+      font-size: 0.9rem;
+      border: 1px solid #1a242f;
+      box-shadow: inset 0 2px 8px rgba(0,0,0,0.5);
+    }
+    
+    .diagram-container {
+      margin: 24px 0;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background: #000;
+      box-shadow: var(--shadow);
+    }
+    
+    .diagram-container img {
+      width: 100%;
+      display: block;
+      object-fit: cover;
+    }
+
+    .diagram {
+      padding: 20px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: #0a0f14;
+      overflow-x: auto;
+    }
+    
+    .diagram pre {
+      background: transparent;
+      border: none;
+      box-shadow: none;
+      padding: 0;
+      margin: 0;
+      color: var(--accent);
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 20px;
+    }
+
+    .faq-item + .faq-item {
+      margin-top: 24px;
+      padding-top: 24px;
+      border-top: 1px solid var(--line);
+    }
+
+    .footer-note {
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    @media (max-width: 980px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+      .sidebar {
+        position: static;
+      }
+      .two-col {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .hero {
+        padding: 40px 24px;
+      }
+      section {
+        padding: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="hero">
+      <h1>Ariba NOC Center</h1>
+      <p>
+        Comprehensive technical documentation for an open-source Network Operations Center platform that combines metrics,
+        alerting, log analytics, intrusion detection, traffic visibility, and infrastructure inventory in one Docker-based deployment.
+      </p>
+      <div class="hero-meta">
+        <span class="tag">Open-source NOC platform</span>
+        <span class="tag">Docker Compose deployment</span>
+        <span class="tag">Prometheus + Grafana + Zabbix + ELK + Suricata</span>
+      </div>
+      <div class="kpi">
+        <div class="card"><span class="num">20</span>Runtime services</div>
+        <div class="card"><span class="num">4</span>Primary observability planes</div>
+        <div class="card"><span class="num">3</span>Alerting paths</div>
+        <div class="card"><span class="num">1</span>Unified operations stack</div>
+      </div>
+    </header>
+
+    <div class="layout">
+      <aside class="sidebar">
+        <h2>Documentation Map</h2>
+        <ul>
+          <li><a href="#overview">1. Overview</a></li>
+          <li><a href="#quickstart">2. Quickstart / Getting Started</a></li>
+          <li><a href="#components">3. Components</a></li>
+          <li><a href="#architecture">4. Architecture</a></li>
+          <li><a href="#use-cases">5. Use Cases</a></li>
+          <li><a href="#installation">6. Installation Guide</a></li>
+          <li><a href="#configuration">7. Configuration</a></li>
+          <li><a href="#apis">8. APIs / Integration</a></li>
+          <li><a href="#maintenance">9. Maintenance and Troubleshooting</a></li>
+          <li><a href="#security">10. Security</a></li>
+          <li><a href="#faq">11. FAQ</a></li>
+          <li><a href="#references">12. References</a></li>
+          <li><a href="#additional">13. Recommended Additional Sections</a></li>
+        </ul>
+        <p class="small">
+          This page is written as implementation-aware documentation for developers, sysadmins, and IT engineers.
+          It reflects the current repository structure and deployment model.
+        </p>
+      </aside>
+
+      <main>
+        <section id="overview">
+          <h2>1. Overview</h2>
+          <p>
+            Ariba NOC Center is an open-source Network Operations Center platform designed to centralize monitoring,
+            alerting, visibility, and operational control for infrastructure teams. The platform is built around a Docker Compose
+            deployment model so that core services can be started consistently on a single host or adapted to more advanced environments.
+          </p>
+
+          <h3>1.1 Introduction</h3>
+          <p>
+            The product combines multiple best-of-breed open-source tools into a unified NOC stack: Prometheus for metrics,
+            Alertmanager for notification routing, Grafana for dashboards, Zabbix for agent and SNMP-based monitoring,
+            LibreNMS for discovery and network device monitoring, Suricata for intrusion detection, ELK for centralized logs,
+            ntopng for traffic analytics, and NetBox for IPAM/DCIM inventory.
+          </p>
+
+          <h3>1.2 Key Features and Capabilities</h3>
+          <div class="grid">
+            <div class="card">
+              <strong>Unified Monitoring</strong>
+              Collect host metrics, device status, traffic events, and IDS logs from one deployment.
+            </div>
+            <div class="card">
+              <strong>Multi-Channel Alerting</strong>
+              Route alerts to Telegram and email through Prometheus Alertmanager and script-based integrations.
+            </div>
+            <div class="card">
+              <strong>Security Telemetry</strong>
+              Detect network events with Suricata and index them in Elasticsearch for investigation.
+            </div>
+            <div class="card">
+              <strong>Operational Dashboards</strong>
+              Visualize health, utilization, traffic, and security signals in Grafana and Kibana.
+            </div>
+            <div class="card">
+              <strong>Asset and IP Inventory</strong>
+              Track devices, addresses, and topology with NetBox and LibreNMS.
+            </div>
+            <div class="card">
+              <strong>Self-Healing Support</strong>
+              Watchdog can detect non-running containers and attempt automatic restarts.
+            </div>
+          </div>
+
+          <h3>1.3 Target Users and Audience</h3>
+          <ul>
+            <li><strong>Sysadmins:</strong> deploy and operate the stack, manage host and service health, and handle upgrades.</li>
+            <li><strong>Network Engineers:</strong> monitor routers, switches, SNMP-enabled devices, flows, and link-state conditions.</li>
+            <li><strong>NOC Engineers:</strong> triage alerts, review dashboards, investigate log events, and execute runbook steps.</li>
+            <li><strong>Security Analysts:</strong> inspect Suricata alerts, correlate events in ELK, and investigate suspicious traffic.</li>
+            <li><strong>Developers / Integrators:</strong> extend configuration, build automation, and integrate external systems through APIs.</li>
+          </ul>
+        </section>
+
+        <section id="quickstart">
+          <h2>2. Quickstart / Getting Started</h2>
+
+          <h3>2.1 Installation Prerequisites</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Requirement</th>
+                <th>Minimum</th>
+                <th>Recommended</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Operating System</td>
+                <td>Linux</td>
+                <td>Ubuntu 22.04 LTS or newer</td>
+                <td>The current deployment and helper scripts assume a Linux host.</td>
+              </tr>
+              <tr>
+                <td>Docker Engine</td>
+                <td>24+</td>
+                <td>Latest stable</td>
+                <td>Required for all containers.</td>
+              </tr>
+              <tr>
+                <td>Docker Compose</td>
+                <td>v2.20+</td>
+                <td>Latest stable</td>
+                <td>The project uses <code>docker compose</code> syntax.</td>
+              </tr>
+              <tr>
+                <td>CPU</td>
+                <td>4 cores</td>
+                <td>8 cores</td>
+                <td>Elasticsearch, Grafana, and Suricata benefit from more CPU.</td>
+              </tr>
+              <tr>
+                <td>Memory</td>
+                <td>8 GB</td>
+                <td>16 GB or more</td>
+                <td>ELK and multi-tool monitoring stacks are memory-intensive.</td>
+              </tr>
+              <tr>
+                <td>Disk</td>
+                <td>40 GB</td>
+                <td>100 GB SSD+</td>
+                <td>Metric retention and Elasticsearch log storage grow quickly.</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3>2.2 Step-by-Step Quickstart</h3>
+          <pre>cd /path/to/ariba-noc-center
+cp .env.example .env
+# Edit passwords, Telegram, SMTP, and host-specific values
+nano .env
+
+# First-time bootstrap
+bash scripts/setup.sh</pre>
+
+          <p>
+            The setup script checks Docker availability, creates required host directories, adjusts file permissions,
+            tunes <code>vm.max_map_count</code> for Elasticsearch, pulls images, starts databases and Elasticsearch first,
+            and then brings up the full stack.
+          </p>
+
+          <h3>2.3 First Login and Dashboard Walkthrough</h3>
+          <div class="two-col">
+            <div class="card">
+              <strong>Grafana</strong>
+              URL: <code>http://localhost:3000</code><br>
+              Login with <code>GF_SECURITY_ADMIN_USER</code> and <code>GF_SECURITY_ADMIN_PASSWORD</code> from <code>.env</code>.<br>
+              Start with the <em>NOC Overview</em> and <em>Suricata IDS</em> dashboards.
+            </div>
+            <div class="card">
+              <strong>Zabbix Web</strong>
+              URL: <code>http://localhost:8090</code><br>
+              Default initial login is the upstream default unless changed after deployment.<br>
+              Use it to add hosts, templates, and media types.
+            </div>
+            <div class="card">
+              <strong>LibreNMS</strong>
+              URL: <code>http://localhost:8000</code><br>
+              Complete first-run setup and start adding SNMP devices and discovery ranges.
+            </div>
+            <div class="card">
+              <strong>Kibana and NetBox</strong>
+              Kibana: <code>http://localhost:5601</code><br>
+              NetBox: <code>http://localhost:8080</code><br>
+              Use Kibana for security/log analysis and NetBox for inventory data.
+            </div>
+          </div>
+        </section>
+
+        <section id="components">
+          <h2>3. Components</h2>
+
+          <h3>3.1 Major Components</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Component</th>
+                <th>Implemented By</th>
+                <th>Role</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Monitoring Engine</td>
+                <td>Prometheus, Zabbix, LibreNMS</td>
+                <td>Collects metrics, host status, device state, SNMP data, and evaluates monitoring rules.</td>
+              </tr>
+              <tr>
+                <td>Alert Manager</td>
+                <td>Prometheus Alertmanager, Zabbix alert scripts</td>
+                <td>Routes notifications to Telegram and email, groups events, and suppresses duplicate warnings.</td>
+              </tr>
+              <tr>
+                <td>Dashboard Layer</td>
+                <td>Grafana, Kibana, Zabbix Web, LibreNMS UI</td>
+                <td>Presents metrics, traffic, IDS events, log search, and operational dashboards.</td>
+              </tr>
+              <tr>
+                <td>Logging and Event Pipeline</td>
+                <td>Filebeat, Logstash, Elasticsearch</td>
+                <td>Collects, parses, enriches, stores, and exposes searchable logs and events.</td>
+              </tr>
+              <tr>
+                <td>Intrusion Detection</td>
+                <td>Suricata</td>
+                <td>Inspects network traffic and produces EVE JSON and fast alert logs.</td>
+              </tr>
+              <tr>
+                <td>Traffic Analytics</td>
+                <td>ntopng</td>
+                <td>Provides traffic and flow visibility for operational analysis.</td>
+              </tr>
+              <tr>
+                <td>Inventory and IPAM</td>
+                <td>NetBox</td>
+                <td>Stores network topology, devices, sites, and IP address information.</td>
+              </tr>
+              <tr>
+                <td>Automation / Recovery</td>
+                <td>watchdog.sh</td>
+                <td>Restarts failed services and emits Telegram notifications if configured.</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3>3.2 Component Interaction Diagram</h3>
+          <div class="diagram">
+            <pre>                        +----------------------+
+                        |    Grafana / UIs     |
+                        | Grafana, Kibana,     |
+                        | Zabbix, LibreNMS     |
+                        +----------+-----------+
+                                   |
+          +------------------------+------------------------+
+          |                                                 |
+  +-------v--------+                              +---------v---------+
+  | Monitoring     |                              | Logging / Security |
+  | Prometheus     |                              | Filebeat           |
+  | Zabbix         |                              | Logstash           |
+  | LibreNMS       |                              | Elasticsearch      |
+  +-------+--------+                              | Suricata           |
+          |                                       +---------+---------+
+          |                                                 |
+  +-------v--------+                              +---------v---------+
+  | Alert Routing  |                              | Traffic Visibility |
+  | Alertmanager   |                              | ntopng            |
+  | Zabbix scripts |                              +-------------------+
+  +-------+--------+
+          |
+  +-------v--------+
+  | Telegram / SMTP |
+  +-----------------+
+
+  +--------------------------- Inventory / Topology ---------------------------+
+  | NetBox + PostgreSQL + Redis                                               |
+  +---------------------------------------------------------------------------+</pre>
+          </div>
+        </section>
+
+        <section id="architecture">
+          <h2>4. Architecture</h2>
+
+          <h3>4.1 System Architecture Diagram</h3>
+          <div class="diagram-container">
+            <img src="assets/noc_architecture.png" alt="Ariba NOC Center System Architecture Concept" />
+          </div>
+          <div class="diagram">
+            <pre>                                  Ariba NOC Center
+
+    +-----------------+      +--------------------+      +------------------+
+    | Network Devices |----->| LibreNMS / Zabbix  |----->| Alerts / Tickets |
+    | Routers/Switches| SNMP | Device Monitoring  |      | Telegram / Email |
+    +-----------------+      +--------------------+      +------------------+
+
+    +-----------------+      +--------------------+      +------------------+
+    | Linux Servers   |----->| Node Exporter      |----->| Prometheus       |
+    | Applications    |      | Zabbix Agent       |      | Alertmanager     |
+    +-----------------+      +--------------------+      +---------+--------+
+                                                                   |
+                                                                   v
+                                                           +---------------+
+                                                           | Grafana       |
+                                                           | Dashboards    |
+                                                           +---------------+
+
+    +-----------------+      +--------------------+      +------------------+
+    | Network Traffic |----->| Suricata IDS       |----->| Filebeat         |
+    +-----------------+      +--------------------+      +---------+--------+
+                                                                   |
+                                                                   v
+                                                           +---------------+
+                                                           | Logstash      |
+                                                           | Elasticsearch |
+                                                           | Kibana        |
+                                                           +---------------+
+
+    +-----------------+      +--------------------+
+    | Network Assets  |----->| NetBox             |
+    | IPs / Sites     |      | PostgreSQL / Redis |
+    +-----------------+      +--------------------+</pre>
+          </div>
+
+          <h3>4.2 Architecture Layers</h3>
+          <div class="grid">
+            <div class="card">
+              <strong>Presentation Layer</strong>
+              Grafana, Kibana, Zabbix Web, LibreNMS UI, and NetBox deliver dashboards and operator-facing interfaces.
+            </div>
+            <div class="card">
+              <strong>Observability Layer</strong>
+              Prometheus, node_exporter, Zabbix, and LibreNMS collect health and infrastructure state.
+            </div>
+            <div class="card">
+              <strong>Security and Event Layer</strong>
+              Suricata produces events; Filebeat and Logstash normalize them; Elasticsearch stores them.
+            </div>
+            <div class="card">
+              <strong>Notification Layer</strong>
+              Alertmanager and Zabbix media scripts deliver Telegram and email notifications.
+            </div>
+            <div class="card">
+              <strong>State Layer</strong>
+              MariaDB, PostgreSQL, Redis, Elasticsearch volumes, RRD files, and Prometheus TSDB retain state.
+            </div>
+            <div class="card">
+              <strong>Operations Layer</strong>
+              Docker Compose, setup automation, and watchdog govern lifecycle and recovery.
+            </div>
+          </div>
+
+          <h3>4.3 Technology Stack</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Area</th>
+                <th>Technology</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Container Runtime</td>
+                <td>Docker, Docker Compose</td>
+                <td>Primary packaging and orchestration model</td>
+              </tr>
+              <tr>
+                <td>Metrics</td>
+                <td>Prometheus, node_exporter</td>
+                <td>Scrape-based metrics collection</td>
+              </tr>
+              <tr>
+                <td>Visualization</td>
+                <td>Grafana, Kibana</td>
+                <td>Dashboards and log exploration</td>
+              </tr>
+              <tr>
+                <td>Traditional Monitoring</td>
+                <td>Zabbix, LibreNMS</td>
+                <td>Agent monitoring, SNMP, templates, discovery</td>
+              </tr>
+              <tr>
+                <td>Logging Pipeline</td>
+                <td>Filebeat, Logstash, Elasticsearch</td>
+                <td>Collection, parsing, indexing, search</td>
+              </tr>
+              <tr>
+                <td>Network Security</td>
+                <td>Suricata</td>
+                <td>IDS sensor with EVE JSON output</td>
+              </tr>
+              <tr>
+                <td>Traffic Analytics</td>
+                <td>ntopng</td>
+                <td>Traffic and flow monitoring</td>
+              </tr>
+              <tr>
+                <td>Inventory</td>
+                <td>NetBox</td>
+                <td>IPAM/DCIM platform</td>
+              </tr>
+              <tr>
+                <td>Datastores</td>
+                <td>MariaDB, PostgreSQL, Redis, Prometheus TSDB</td>
+                <td>Persistent application and cache state</td>
+              </tr>
+              <tr>
+                <td>Automation</td>
+                <td>Bash, curl, shell scripts</td>
+                <td>Bootstrap, health automation, notification scripts</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section id="use-cases">
+          <h2>5. Use Cases</h2>
+
+          <h3>5.1 Network Monitoring</h3>
+          <p>
+            Monitor network devices over SNMP using LibreNMS and Zabbix templates. Track interface health, link state,
+            uptime, bandwidth, and device availability from a central console.
+          </p>
+
+          <h3>5.2 Alert Management and Incident Triage</h3>
+          <p>
+            Route Prometheus-generated alerts to Alertmanager for Telegram and email delivery. Use Grafana dashboards and
+            Kibana search to validate whether an alert is isolated or part of a wider incident.
+          </p>
+
+          <h3>5.3 Server Uptime and Resource Tracking</h3>
+          <p>
+            Track CPU, memory, disk, interface, and load metrics from Linux hosts through node_exporter and Zabbix agent.
+            Detect high resource utilization or target unavailability early.
+          </p>
+
+          <h3>5.4 Security Monitoring</h3>
+          <p>
+            Inspect Suricata IDS alerts in Grafana or Kibana, correlate them with system logs, and investigate suspicious sources
+            or protocols through Elasticsearch queries.
+          </p>
+
+          <h3>5.5 Inventory and Capacity Planning</h3>
+          <p>
+            Use NetBox for structured inventory and IP management while combining Grafana and LibreNMS metrics to make capacity,
+            growth, and topology decisions.
+          </p>
+        </section>
+
+        <section id="installation">
+          <h2>6. Installation Guide</h2>
+
+          <h3>6.1 Step-by-Step Installation</h3>
+          <ol>
+            <li>Install Docker Engine and Docker Compose on the target Linux host.</li>
+            <li>Clone or copy the project repository to the target system.</li>
+            <li>Create <code>.env</code> from <code>.env.example</code>.</li>
+            <li>Set secure values for all passwords, Telegram credentials, SMTP credentials, and NetBox secret key.</li>
+            <li>Run <code>bash scripts/setup.sh</code>.</li>
+            <li>Verify service status with <code>docker compose ps</code>.</li>
+            <li>Log into Grafana, Zabbix, LibreNMS, Kibana, and NetBox to complete environment-specific onboarding.</li>
+          </ol>
+
+          <h3>6.2 Configuration Files and Environment Setup</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>File</th>
+                <th>Purpose</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>docker-compose.yml</code></td>
+                <td>Defines all services, ports, environment variables, volumes, and networks.</td>
+              </tr>
+              <tr>
+                <td><code>.env</code></td>
+                <td>Holds deployer-controlled secrets and runtime settings.</td>
+              </tr>
+              <tr>
+                <td><code>prometheus/prometheus.yml</code></td>
+                <td>Prometheus scrape jobs, alertmanager targets, and rule includes.</td>
+              </tr>
+              <tr>
+                <td><code>alertmanager/alertmanager.yml</code></td>
+                <td>Alert routing rules, receivers, and inhibition rules.</td>
+              </tr>
+              <tr>
+                <td><code>elk/logstash/pipeline/logstash.conf</code></td>
+                <td>Log parsing and index selection pipeline.</td>
+              </tr>
+              <tr>
+                <td><code>elk/filebeat/filebeat.yml</code></td>
+                <td>Input definitions for Suricata and system logs.</td>
+              </tr>
+              <tr>
+                <td><code>suricata/etc/suricata.yaml</code></td>
+                <td>Suricata engine and output configuration.</td>
+              </tr>
+              <tr>
+                <td><code>netbox/config/configuration.py</code></td>
+                <td>NetBox database and Redis configuration.</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3>6.3 Docker Compose Setup</h3>
+          <pre>docker compose config --quiet
+docker compose pull
+docker compose up -d
+docker compose ps</pre>
+
+          <p>
+            Compose creates a single bridge network named <code>noc</code> and attaches all services to it.
+            Named volumes persist databases, dashboards, metrics, indices, and application state.
+          </p>
+
+          <div class="callout success">
+            <strong>Implemented bootstrap path:</strong> the repository already includes <code>scripts/setup.sh</code>, so the preferred installation method is the scripted one rather than a purely manual sequence.
+          </div>
+        </section>
+
+        <section id="configuration">
+          <h2>7. Configuration</h2>
+
+          <h3>7.1 Monitoring Rules</h3>
+          <p>
+            Prometheus rules live in <code>prometheus/alerts/node.yml</code> and <code>prometheus/alerts/network.yml</code>.
+            These files define host-down, CPU, memory, disk, load, interface, traffic, packet-drop, and network error alerts.
+          </p>
+          <pre>groups:
+  - name: node_alerts
+    rules:
+      - alert: HostDown
+        expr: up == 0
+        for: 1m
+        labels:
+          severity: critical</pre>
+
+          <h3>7.2 Alert Routing</h3>
+          <p>
+            Alertmanager groups alerts by <code>alertname</code> and <code>severity</code>, then routes critical and warning notifications
+            to Telegram and optionally email. Zabbix includes script-based media integrations through <code>telegram.sh</code> and <code>email.sh</code>.
+          </p>
+
+          <h3>7.3 Users and Permissions</h3>
+          <ul>
+            <li><strong>Grafana:</strong> use built-in Grafana organization users and admin credentials from <code>.env</code>.</li>
+            <li><strong>Zabbix:</strong> define roles, users, and media types in the Zabbix UI.</li>
+            <li><strong>LibreNMS:</strong> assign user access and alert ownership through the web UI.</li>
+            <li><strong>NetBox:</strong> create administrators and role-based permissions in the application.</li>
+            <li><strong>Elasticsearch / Kibana:</strong> current deployment uses the <code>elastic</code> superuser password from <code>.env</code>.</li>
+          </ul>
+
+          <h3>7.4 Example Configuration Surface</h3>
+          <pre># .env example values
+GF_SECURITY_ADMIN_USER=admin
+GF_SECURITY_ADMIN_PASSWORD=CHANGE_ME
+ELASTIC_PASSWORD=CHANGE_ME
+ALERT_TELEGRAM_BOT_TOKEN=
+ALERT_TELEGRAM_CHAT_ID=
+ALERT_SMTP_HOST=smtp.gmail.com
+ALERT_EMAIL_TO=oncall@example.com</pre>
+
+          <h3>7.5 Additional Runtime Configuration</h3>
+          <ul>
+            <li>Extend Prometheus scrape targets to include remote exporters.</li>
+            <li>Adjust Suricata interfaces and rules for the real network topology.</li>
+            <li>Create Kibana index patterns after the first logs arrive.</li>
+            <li>Set LibreNMS discovery ranges and SNMP communities for the environment.</li>
+            <li>Complete NetBox object modeling for sites, racks, devices, and IP space.</li>
+          </ul>
+        </section>
+
+        <section id="apis">
+          <h2>8. APIs / Integration</h2>
+
+          <h3>8.1 API Surface</h3>
+          <p>
+            Ariba NOC Center is an integration platform built on multiple upstream systems. It does not currently expose a single custom API layer.
+            Instead, integrations are performed through the APIs of embedded components.
+          </p>
+
+          <table>
+            <thead>
+              <tr>
+                <th>System</th>
+                <th>API Type</th>
+                <th>Common Usage</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Prometheus</td>
+                <td>HTTP API</td>
+                <td>Query metrics, targets, rules, and status data</td>
+              </tr>
+              <tr>
+                <td>Alertmanager</td>
+                <td>HTTP API</td>
+                <td>View alerts, silences, and receivers</td>
+              </tr>
+              <tr>
+                <td>Grafana</td>
+                <td>REST API</td>
+                <td>Manage dashboards, users, alerting objects, and datasources</td>
+              </tr>
+              <tr>
+                <td>Kibana / Elasticsearch</td>
+                <td>REST API</td>
+                <td>Search logs, manage indices, retrieve health, automate queries</td>
+              </tr>
+              <tr>
+                <td>NetBox</td>
+                <td>REST API</td>
+                <td>Automate IPAM/DCIM object creation and inventory synchronization</td>
+              </tr>
+              <tr>
+                <td>Zabbix</td>
+                <td>JSON-RPC API</td>
+                <td>Manage hosts, templates, triggers, and automation workflows</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3>8.2 Example Endpoints</h3>
+          <pre># Prometheus targets
+GET http://localhost:9090/api/v1/targets
+
+# Alertmanager alerts
+GET http://localhost:9093/api/v2/alerts
+
+# Elasticsearch cluster health
+GET http://localhost:9200/_cluster/health
+
+# NetBox API root
+GET http://localhost:8080/api/
+
+# Zabbix API
+POST http://localhost:8090/api_jsonrpc.php</pre>
+
+          <h3>8.3 Integration Examples</h3>
+          <ul>
+            <li>Feed external dashboards from Prometheus queries.</li>
+            <li>Synchronize NetBox inventory into provisioning or CMDB workflows.</li>
+            <li>Send syslog from routers and switches to Logstash UDP port <code>5140</code>.</li>
+            <li>Use Grafana API or provisioning files to standardize dashboards across environments.</li>
+            <li>Automate Zabbix host creation for newly provisioned servers.</li>
+          </ul>
+
+          <h3>8.4 Authentication and Security Considerations</h3>
+          <ul>
+            <li>Most embedded APIs inherit each upstream product's authentication model.</li>
+            <li>Elasticsearch security is enabled, but HTTP TLS is disabled by default in this repository.</li>
+            <li>Store API tokens and credentials outside version control, preferably in secrets management.</li>
+            <li>Restrict access to API endpoints through network segmentation or a reverse proxy.</li>
+          </ul>
+        </section>
+
+        <section id="maintenance">
+          <h2>9. Maintenance and Troubleshooting</h2>
+
+          <h3>9.1 Log Locations</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Source</th>
+                <th>Location</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Docker container logs</td>
+                <td><code>docker compose logs -f &lt;service&gt;</code></td>
+                <td>Primary troubleshooting entry point for all services.</td>
+              </tr>
+              <tr>
+                <td>Suricata logs</td>
+                <td><code>suricata/log/eve.json</code>, <code>suricata/log/fast.log</code></td>
+                <td>IDS event output consumed by Filebeat.</td>
+              </tr>
+              <tr>
+                <td>Host system logs</td>
+                <td><code>/var/log/host/*</code> inside Filebeat container</td>
+                <td>Mounted from the Docker host for shipping.</td>
+              </tr>
+              <tr>
+                <td>Filebeat logs</td>
+                <td><code>/var/log/filebeat</code> inside container</td>
+                <td>Enabled in filebeat.yml.</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3>9.2 Common Errors and Fixes</h3>
+          <div class="grid">
+            <div class="card">
+              <strong>Elasticsearch fails to start</strong>
+              Check <code>vm.max_map_count</code>. The setup script sets it to <code>262144</code>. Confirm host memory is sufficient.
+            </div>
+            <div class="card">
+              <strong>Prometheus targets are down</strong>
+              Inspect <code>docker compose ps</code>, verify service reachability on the internal network, and check scrape target names.
+            </div>
+            <div class="card">
+              <strong>No logs in Kibana</strong>
+              Check Filebeat container logs, verify <code>eve.json</code> exists, and inspect Logstash parsing errors.
+            </div>
+            <div class="card">
+              <strong>Telegram/email alerts do not arrive</strong>
+              Validate <code>.env</code> credentials, review Alertmanager config, and inspect Zabbix alert script execution.
+            </div>
+            <div class="card">
+              <strong>Suricata sees no traffic</strong>
+              Confirm the monitored interface in <code>suricata.yaml</code>, host networking assumptions, and capture permissions.
+            </div>
+            <div class="card">
+              <strong>NetBox or LibreNMS cannot connect to backend stores</strong>
+              Verify database credentials in <code>.env</code> and check Redis, MariaDB, or PostgreSQL container health.
+            </div>
+          </div>
+
+          <h3>9.3 Upgrade Procedure</h3>
+          <ol>
+            <li>Back up all named volumes and bind-mounted data.</li>
+            <li>Review upstream release notes for Prometheus, Grafana, Zabbix, Elastic Stack, NetBox, and LibreNMS.</li>
+            <li>Update image tags in <code>docker-compose.yml</code> if required.</li>
+            <li>Run <code>docker compose pull</code>.</li>
+            <li>Restart with <code>docker compose up -d</code>.</li>
+            <li>Verify dashboards, APIs, alerts, and log indexing after restart.</li>
+          </ol>
+
+          <h3>9.4 Operational Commands</h3>
+          <pre>docker compose config --quiet
+docker compose ps
+docker compose logs -f prometheus
+docker compose logs -f logstash
+curl -X POST http://localhost:9090/-/reload
+curl -u elastic:&lt;password&gt; http://localhost:9200/_cluster/health?pretty</pre>
+        </section>
+
+        <section id="security">
+          <h2>10. Security</h2>
+
+          <h3>10.1 Recommendations for Securing the Platform</h3>
+          <ul>
+            <li>Replace all default or placeholder credentials in <code>.env</code> before first production use.</li>
+            <li>Place all web interfaces behind a reverse proxy that terminates TLS and centralizes authentication.</li>
+            <li>Restrict published ports to management networks or bind them to localhost when feasible.</li>
+            <li>Store secrets in a proper secret manager instead of flat files where possible.</li>
+            <li>Back up volumes regularly and encrypt backups if they contain credentials or operational data.</li>
+          </ul>
+
+          <h3>10.2 User Access Control</h3>
+          <ul>
+            <li>Use Grafana organizations and roles to separate operators from administrators.</li>
+            <li>Configure Zabbix media types and user groups to match escalation structure.</li>
+            <li>Apply NetBox permission groups for inventory editors versus read-only consumers.</li>
+            <li>Do not expose Elasticsearch or Kibana broadly without access restrictions.</li>
+          </ul>
+
+          <h3>10.3 Network Hardening</h3>
+          <ul>
+            <li>Use firewall rules so only trusted operators can reach the exposed web ports.</li>
+            <li>Segment monitoring traffic from production application traffic when possible.</li>
+            <li>Evaluate whether Suricata should run on a mirrored/SPAN interface instead of the default container interface.</li>
+            <li>Review Docker socket exposure used by watchdog, because it grants broad control over the Docker host.</li>
+          </ul>
+
+          <div class="callout">
+            <strong>Current repository posture:</strong> Elasticsearch security is enabled, but TLS is disabled; Suricata runs privileged; Filebeat runs as root; watchdog mounts the Docker socket. Those are operationally understandable choices, but they should be treated as hardening priorities before production rollout.
+          </div>
+        </section>
+
+        <section id="faq">
+          <h2>11. FAQ</h2>
+
+          <div class="faq-item">
+            <h3>Does Ariba NOC Center expose a single unified API?</h3>
+            <p>No. It is a platform assembled from multiple upstream systems. Integrations use the native APIs of Prometheus, Grafana, Zabbix, NetBox, Elasticsearch, and Alertmanager.</p>
+          </div>
+
+          <div class="faq-item">
+            <h3>Can it monitor remote servers out of the box?</h3>
+            <p>Partially. The current Prometheus configuration scrapes the local Node Exporter. Remote monitoring requires additional exporters, Zabbix agents, SNMP targets, or explicit scrape job entries.</p>
+          </div>
+
+          <div class="faq-item">
+            <h3>Can it monitor network devices?</h3>
+            <p>Yes. LibreNMS and Zabbix provide the primary path for SNMP-based device monitoring and discovery.</p>
+          </div>
+
+          <div class="faq-item">
+            <h3>Is high availability included?</h3>
+            <p>No. The current repository describes a single-host Compose deployment. HA would require replicated datastores, external storage, orchestration changes, and front-end failover design.</p>
+          </div>
+
+          <div class="faq-item">
+            <h3>Where should I start after deployment?</h3>
+            <p>Start with Grafana for dashboards, then onboard hosts and devices in Zabbix and LibreNMS, create Kibana index patterns, and load inventory into NetBox.</p>
+          </div>
+
+          <div class="faq-item">
+            <h3>Is this production-ready as-is?</h3>
+            <p>It is a strong functional base, but it still needs environment-specific onboarding, hardening, credentials rotation, TLS, backup design, and clear operational ownership before production use.</p>
+          </div>
+        </section>
+
+        <section id="references">
+          <h2>12. References</h2>
+          <ul>
+            <li><a href="https://prometheus.io/" target="_blank" rel="noreferrer">Prometheus</a></li>
+            <li><a href="https://grafana.com/" target="_blank" rel="noreferrer">Grafana</a></li>
+            <li><a href="https://www.zabbix.com/" target="_blank" rel="noreferrer">Zabbix</a></li>
+            <li><a href="https://www.librenms.org/" target="_blank" rel="noreferrer">LibreNMS</a></li>
+            <li><a href="https://suricata.io/" target="_blank" rel="noreferrer">Suricata</a></li>
+            <li><a href="https://www.elastic.co/elastic-stack" target="_blank" rel="noreferrer">Elastic Stack</a></li>
+            <li><a href="https://www.ntop.org/products/traffic-analysis/ntop/" target="_blank" rel="noreferrer">ntopng</a></li>
+            <li><a href="https://netbox.dev/" target="_blank" rel="noreferrer">NetBox</a></li>
+            <li><a href="https://docs.docker.com/compose/" target="_blank" rel="noreferrer">Docker Compose</a></li>
+          </ul>
+        </section>
+
+        <section id="additional">
+          <h2>13. Recommended Additional Sections</h2>
+          <p>
+            The following sections are not just optional nice-to-haves for this project; they are materially useful because the platform stores operational state,
+            uses multiple data services, and is intended for ongoing production operations.
+          </p>
+
+          <h3>13.1 Performance Tuning Guide</h3>
+          <p>
+            Recommended because Elasticsearch, Grafana, Prometheus retention, and Suricata capture performance depend heavily on host sizing,
+            retention settings, and traffic volume.
+          </p>
+
+          <h3>13.2 Backup and Recovery Procedure</h3>
+          <p>
+            Recommended because the stack includes persistent volumes for metrics, dashboards, indices, databases, RRD files, and inventory data.
+            Without backup procedures, recovery from host failure is incomplete.
+          </p>
+
+          <h3>13.3 Contributing Guide</h3>
+          <p>
+            Recommended because the product is described as open-source. Contributors need coding conventions, branching guidance,
+            review expectations, and a way to validate configuration changes locally.
+          </p>
+
+          <h3>13.4 Changelog / Release Notes</h3>
+          <p>
+            Recommended because the project bundles many upstream products that evolve independently. Operators need a clear record of image updates,
+            schema-sensitive changes, and breaking configuration shifts.
+          </p>
+
+          <h3>13.5 Suggested Follow-Up Topics</h3>
+          <ul>
+            <li>Supported deployment topologies: single host versus segmented environments</li>
+            <li>Data retention policy guidance for Prometheus and Elasticsearch</li>
+            <li>Disaster recovery validation checklist</li>
+            <li>Role and responsibility matrix for NOC operations</li>
+          </ul>
+          <p class="footer-note">
+            This page is ready to serve as HTML website content. It can be used as a standalone documentation page or split into separate route-based pages later.
+          </p>
+        </section>
+      </main>
+    </div>
+  </div>
+</body>
+</html>
