@@ -7,7 +7,6 @@ set -eu
 TELEGRAM_BOT_TOKEN="${TELEGRAM_BOT_TOKEN:-}"
 TELEGRAM_CHAT_ID="${TELEGRAM_CHAT_ID:-}"
 CHECK_INTERVAL="${CHECK_INTERVAL:-30}"
-MAX_RESTART_ATTEMPTS=3
 
 log() { echo "[watchdog] $(date '+%Y-%m-%d %H:%M:%S') $*"; }
 
@@ -21,8 +20,6 @@ telegram_notify() {
       -o /dev/null 2>/dev/null || true
   fi
 }
-
-declare -A restart_counts 2>/dev/null || restart_counts=""
 
 log "Watchdog started. Checking every ${CHECK_INTERVAL}s"
 telegram_notify "✅ *NOC Watchdog started* on $(hostname)"

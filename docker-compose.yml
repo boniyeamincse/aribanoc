@@ -156,6 +156,7 @@ services:
       # NTOPNG_PASSWORD: admin
     volumes:
       - ntopng_data:/var/lib/ntopng
+      - ./ntopng/ntopng.conf:/etc/ntopng/ntopng.conf:ro
     ports:
       - '3001:3000'   # web UI (mapped)
       - '3002:3001'   # streaming
